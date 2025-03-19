@@ -3,8 +3,6 @@ import config from "../config/config";
 import { SmsServive } from "./sms/send-sms.service";
 
 class RmqConsumerService {
-  private requestQueue = "MSQ_REQUEST";
-  private responseQueue = "MSQ_RESPONSE";
   private sendSMSQueue = 'QUEUE_SEND_SMS';
   private sendEmailQueue = 'QUEUE_SEND_MAIL';
   private pushNotificationQueue = 'QUEUE_PUSH_NOTIF';
