@@ -10,7 +10,7 @@ import { initMongoConnection } from "./database/connection/mongo.connection";
 import * as grpc from '@grpc/grpc-js';
 import * as protoLoader from '@grpc/proto-loader';
 import path from "path";
-import { clientRequest, findRecipe } from "./services/common/customer.service";
+import { clientRequest, findRecipe, getAllNews } from "./services/common/customer.service";
 // connectDB();
 
 
@@ -39,13 +39,13 @@ function startRestServer() {
 
 
 function intiGrpcConnection() {
-  const rpc_port = 50051;
-  const packageDefinition = protoLoader.loadSync(path.join(__dirname, './proto/customers/recipes.proto'));
-  const customerProto = grpc.loadPackageDefinition(packageDefinition) as any;
+  const rpc_port = 5001;
+  const packageDefinition = protoLoader.loadSync(path.join(__dirname, '../../ecom-protos-grpc/customers/customer.proto'));
+  const customerProto = grpc.loadPackageDefinition(packageDefinition).Customer as any;
   const server = new grpc.Server();
 
-  server.addService(customerProto.Recipes.service, { find: clientRequest });
-  // server.addService(customerProto.Recipes.service, { getAllNews: callre });
+  // server.addService(customerProto.CustomersService.service, { find: findRecipe });
+  server.addService(customerProto.CustomersService.service, { getAllNews: getAllNews });
   server.bindAsync(
     `0.0.0.0:${rpc_port}`,
     grpc.ServerCredentials.createInsecure(),
