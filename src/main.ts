@@ -10,7 +10,7 @@ import { initMongoConnection } from "./database/connection/mongo.connection";
 import * as grpc from '@grpc/grpc-js';
 import * as protoLoader from '@grpc/proto-loader';
 import path from "path";
-import { clientRequest, findRecipe } from "./services/common/customer.service";
+import { clientRequest, find, findOne, getAllNews } from "./services/common/customer.service";
 // connectDB();
 
 
@@ -39,15 +39,19 @@ function startRestServer() {
 
 
 function intiGrpcConnection() {
-  const rpc_port = 50051;
-  const packageDefinition = protoLoader.loadSync(path.join(__dirname, './proto/customers/recipes.proto'));
-  const customerProto = grpc.loadPackageDefinition(packageDefinition) as any;
+  const rpc_port = 5001;
+  const packageDefinitionCustomer = protoLoader.loadSync(path.join(__dirname, '../../ecom-protos-grpc/customers/customer.proto'));
+  const packageDefinitionHero = protoLoader.loadSync(path.join(__dirname, '../../ecom-protos-grpc/customers/hero.proto'));
+  const customerProto = grpc.loadPackageDefinition(packageDefinitionCustomer).Customer as any;
+  const heroProto = grpc.loadPackageDefinition(packageDefinitionHero).hero as any;
   const server = new grpc.Server();
 
-  server.addService(customerProto.Recipes.service, { find: clientRequest });
-  // server.addService(customerProto.Recipes.service, { getAllNews: callre });
+  // server.addService(customerProto.CustomersService.service, { getAllNews: getAllNews });
+  // server.addService(heroProto.HeroService.service, { findOne: findOne });
+
+  server.addService(customerProto.CustomersService.service, { getAllNews: clientRequest });
   server.bindAsync(
-    `0.0.0.0:${rpc_port}`,
+    `localhost:${rpc_port}`,
     grpc.ServerCredentials.createInsecure(),
     (err, port) => {
       if (err != null) {
