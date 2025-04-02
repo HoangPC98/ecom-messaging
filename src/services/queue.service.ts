@@ -9,6 +9,7 @@ class RmqConsumerService {
   // private connection!: Connection;
   private channel!: Channel;
   public readonly DIRECT_EXCH = 'direct_exchange';
+  public readonly RK_SMS_01 = 'rk_sms_01'
   private readonly smsService: SmsServive;
 
   constructor() {
@@ -28,7 +29,8 @@ class RmqConsumerService {
       this.sendEmailQueue,
       this.pushNotificationQueue
     ])
-    this.consumeSMS();
+    // this.consumeQueueSMS();
+    this.consumeRkeySMS();
     this.consumeEmail();
     this.consumeNotification();
   }
@@ -63,7 +65,21 @@ class RmqConsumerService {
     }))
   }
 
-  async consumeSMS() {
+  async consumeRkeySMS() {
+    await this.channel.assertQueue(this.sendSMSQueue, { durable: true });
+    this.channel.bindQueue(this.sendSMSQueue, this.DIRECT_EXCH, this.RK_SMS_01);
+    this.channel.consume(this.sendSMSQueue, async (msg) => {
+      if (msg) {
+        let content =  JSON.parse(msg.content.toString())
+        console.log(`Consume Msg from Queue: ${this.sendEmailQueue}`, msg?.content.toString())
+        // Acknowledge the processed message
+        this.channel.ack(msg);
+        await this.smsService.consumeMsg(content)
+      }
+    })
+  }
+
+  async consumeQueueSMS() {
     await this.channel.assertQueue(this.sendSMSQueue, { durable: true });
     this.channel.consume(this.sendSMSQueue, async (msg) => {
       if (msg) {
@@ -71,10 +87,7 @@ class RmqConsumerService {
         console.log(`Consume Msg from Queue: ${this.sendEmailQueue}`, msg?.content.toString())
         // Acknowledge the processed message
         this.channel.ack(msg);
-        await this.smsService.consumeMsg({
-          to: content.key,
-          text: content.value
-        })
+        await this.smsService.consumeMsg(content)
       }
     })
   }

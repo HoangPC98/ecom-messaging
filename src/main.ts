@@ -1,6 +1,5 @@
 import express, { Express } from "express";
 import { Server } from "http";
-import userRouter from "./routes/authRoutes";
 import { errorConverter, errorHandler } from "./middleware";
 // import { connectDB } from "./database";
 import config from "./config/config";
@@ -29,7 +28,6 @@ async function initRabbitConsumer() {
 function startRestServer() {
   restServer.use(express.json());
   restServer.use(express.urlencoded({ extended: true }));
-  restServer.use(userRouter);
   restServer.use(errorConverter);
   restServer.use(errorHandler);
   server = restServer.listen(config.APP_PORT, () => {
@@ -40,16 +38,14 @@ function startRestServer() {
 
 function intiGrpcConnection() {
   const rpc_port = 5001;
-  const packageDefinitionCustomer = protoLoader.loadSync(path.join(__dirname, '../../ecom-protos-grpc/customers/customer.proto'));
-  const packageDefinitionHero = protoLoader.loadSync(path.join(__dirname, '../../ecom-protos-grpc/customers/hero.proto'));
+  const packageDefinitionCustomer = protoLoader.loadSync(path.join(__dirname, '../../ecom-protos-grpc/customer/customer.proto'));
   const customerProto = grpc.loadPackageDefinition(packageDefinitionCustomer).Customer as any;
-  const heroProto = grpc.loadPackageDefinition(packageDefinitionHero).hero as any;
   const server = new grpc.Server();
 
   // server.addService(customerProto.CustomersService.service, { getAllNews: getAllNews });
   // server.addService(heroProto.HeroService.service, { findOne: findOne });
 
-  server.addService(customerProto.CustomersService.service, { getAllNews: clientRequest });
+  // server.addService(customerProto.CustomersService.service, { getAllNews: clientRequest });
   server.bindAsync(
     `localhost:${rpc_port}`,
     grpc.ServerCredentials.createInsecure(),

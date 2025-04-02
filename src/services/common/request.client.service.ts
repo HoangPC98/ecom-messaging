@@ -2,8 +2,8 @@ import path from 'path';
 import * as grpc from '@grpc/grpc-js';
 import * as protoLoader from '@grpc/proto-loader';
 
-const packageDefinitionReci = protoLoader.loadSync(path.join(__dirname, '../../proto/customers/customer.proto'));
-const packageDefinitionProc = protoLoader.loadSync(path.join(__dirname, '../../proto/customers/customer.proto'));
+const packageDefinitionReci = protoLoader.loadSync(path.join(__dirname, '../../proto/customer/customer.proto'));
+const packageDefinitionProc = protoLoader.loadSync(path.join(__dirname, '../../proto/customer/customer.proto'));
 const recipesProto = grpc.loadPackageDefinition(packageDefinitionReci) as any;
 const processingProto = grpc.loadPackageDefinition(packageDefinitionProc) as any;
 

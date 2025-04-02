@@ -1,7 +1,7 @@
 import * as grpc from '@grpc/grpc-js';
 import * as protoLoader from '@grpc/proto-loader';
 
-const protoPath = process.cwd() + '/../' + '/ecom-protos-grpc/customers/customer.proto';
+const protoPath = process.cwd() + '/../' + '/ecom-protos-grpc/customer/customer.proto';
 const packageDefinition = protoLoader.loadSync(
   protoPath,
   {

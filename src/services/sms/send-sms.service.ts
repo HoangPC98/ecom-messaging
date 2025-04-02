@@ -1,5 +1,5 @@
 import twilio from 'twilio';
-import { SystemSendSmsT } from '../../types/send-sms.type';
+import { MsgSmsContent } from '../../types/send-sms.type';
 import { SmsDocument, SmsModel } from '../../database/models/sms.model';
 import { SendStatus } from '../../enums/common.enum';
 
@@ -14,24 +14,27 @@ export class SmsServive {
 
   }
 
-  async consumeMsg(msg: SystemSendSmsT) {
+  async consumeMsg(msg: MsgSmsContent) {
     const newMsg: SmsDocument = {
-      body: msg.text,
+      code: msg.id,
       from: this.systemPhoneNumber,
-      to: msg.to,
+      to: msg.to_number,
+      body: msg.value,
       isComplete: false,
       sendStatus: SendStatus.PENDING
     }
    try {
-    
+    // sendSMS
     // const message = await this.client.messages.create(newMsg);
+    // console.log('Send Msg successfully...' + message.body);
+
+    // save new Msg into DB
     newMsg.isComplete = true;
     newMsg.sendStatus = SendStatus.SUCCESS;
-    // await saveNewSms(newMsg);
     const created = await SmsModel.create(newMsg);
+
     // const listSavedMsg = await SmsModel.find();
     console.log('MSG SAVE...', created)
-    // console.log('Send Msg successfully...' + message.body);
    } catch (error) {
     newMsg.sendStatus = SendStatus.FAIL;
     console.log('Error when send sms: ', error)

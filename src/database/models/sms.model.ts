@@ -2,6 +2,7 @@ import mongoose, { Model, Schema } from "mongoose";
 import { SendStatus } from "../../enums/common.enum";
 
 export type SmsDocument = {
+  code?: string;
   from?: string;
   to: string;
   body: string;
@@ -11,6 +12,10 @@ export type SmsDocument = {
 
 const smsSchema = new Schema(
   {
+    code: {
+      type: Schema.Types.String,
+      required: true,
+    },
     from: {
       type: Schema.Types.String,
       required: false,
