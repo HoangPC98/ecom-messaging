@@ -1,0 +1,35 @@
+services:
+  mongo_messaging:
+    image: mongo:6-jammy
+    volumes: 
+      - mongodb:/data/mongodb/db
+    ports: 
+      - 27017:27017
+    env_file: 
+      .env
+    network_mode: host
+    
+  messaging_app:
+    container_name: messaging_app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+    env_file: 
+      .env
+    depends_on:
+      - mongo_messaging
+    volumes:
+      - .:/app/messaging_app
+    network_mode: host
+volumes:
+  mongodb:
+    external: true
+  app:
+    external: true
+
+networks:
+  ecom_common:
+    external: true

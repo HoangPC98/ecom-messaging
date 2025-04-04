@@ -9,9 +9,8 @@ export const initMongoConnection = async () => {
         console.log('--> Connect to Mongo Messaging DB successfully');
       })
       .catch(()=>{
-        console.log('--> ERROR when connect to mongoDB...')
+        console.log('--> ERROR when connect to mongoDB...');
       })
-
   } catch (error) {
     console.error(error)
   }
