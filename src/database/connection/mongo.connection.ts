@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
+import  config from "../../config/config";
 
 export const initMongoConnection = async () => {
-  const mongoURI = process.env.MONGO_DB_URI || 'mongodb://localhost:27017';
+  const mongoURI = config.mongoConnectURI || 'mongodb://localhost:27017';
   try {
     // const mongoConnection = await MongoClient.connect(mongoURI);
     mongoose.connect(mongoURI)

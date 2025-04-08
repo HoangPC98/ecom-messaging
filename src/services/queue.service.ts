@@ -19,16 +19,11 @@ class RmqConsumerService {
 
   async init() {
     // Establish connection to RabbitMQ server
-    const connection = await amqp.connect(config.msgBrokerURL);
+    const connection = await amqp.connect(config.msgBrokerURI);
     this.channel = await connection.createChannel();
     this.channel.assertExchange(this.DIRECT_EXCH, 'direct', {
       durable: false
     });
-    this.assertQueues([
-      this.sendSMSQueue,
-      this.sendEmailQueue,
-      this.pushNotificationQueue
-    ])
     // this.consumeQueueSMS();
     this.consumeRkeySMS();
     this.consumeEmail();
