@@ -4,7 +4,7 @@ import { errorConverter, errorHandler } from "./middleware";
 import config from "./config/config";
 import { rmqConsumerService } from "./services/queue.service";
 import { initMongoConnection } from "./database/connection/mongo.connection";
-
+import logger from "./utils/logger";
 
 let server: Server;
 const restServer: Express = express();
@@ -12,7 +12,7 @@ const restServer: Express = express();
 async function initRabbitConsumer() {
   try {
     await rmqConsumerService.init();
-    console.log("--> RabbitMQ client initialized and listening for messages.");
+    logger.info("--> RabbitMQ Consumer initialized and listening for messages.");
   } catch (err) {
     console.error("Failed to initialize RabbitMQ client:", err);
   }
@@ -24,7 +24,7 @@ function startRestServer() {
   restServer.use(errorConverter);
   restServer.use(errorHandler);
   server = restServer.listen(config.APP_PORT, () => {
-    console.log(`--> Server is running on port ${config.APP_PORT}`);
+    logger.info(`--> REST Server is running on port ${config.APP_PORT}`);
   });
 }
 

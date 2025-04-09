@@ -2,7 +2,7 @@ import twilio from 'twilio';
 import { MsgSmsContent } from '../../types/send-sms.type';
 import { SmsDocument, SmsModel } from '../../database/models/sms.model';
 import { SendStatus } from '../../enums/common.enum';
-
+import logger from '../../utils/logger';
 export class SmsServive {
   private accountSid = process.env.TWILIO_ACCOUNT_SID;
   private authToken = process.env.TWILIO_AUTH_TOKEN;
@@ -26,7 +26,7 @@ export class SmsServive {
    try {
     // sendSMS
     // const message = await this.client.messages.create(newMsg);
-    // console.log('Send Msg successfully...' + message.body);
+    // logger.info('Send Msg successfully...' + message.body);
 
     // save new Msg into DB
     newMsg.isComplete = true;
@@ -34,10 +34,10 @@ export class SmsServive {
     const created = await SmsModel.create(newMsg);
 
     // const listSavedMsg = await SmsModel.find();
-    console.log('MSG SAVE...', created)
+    logger.info('MSG SAVE...', created)
    } catch (error) {
     newMsg.sendStatus = SendStatus.FAIL;
-    console.log('Error when send sms: ', error)
+    logger.info('Error when send sms: ', error)
    }
   }
 

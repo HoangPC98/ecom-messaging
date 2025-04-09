@@ -2,8 +2,8 @@
 /dist
 /node_modules
 /build
-
-# Logs
+# dependencies
+/src/secrets/*
 logs
 *.log
 npm-debug.log*

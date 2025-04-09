@@ -2,11 +2,15 @@ import mongoose, { Model, Schema } from "mongoose";
 import { SendStatus } from "../../enums/common.enum";
 
 export type NotificationDocument = {
+  code: string;
   type: string;
   from?: string;
   to: string;
   body: string;
   sendStatus?: SendStatus;
+  isSystem?: boolean;
+  isRead?: boolean;
+  isViewed?: boolean;
 };
 
 const notificationSchema = new Schema(
@@ -17,7 +21,7 @@ const notificationSchema = new Schema(
       unique: true
     },
     type: {
-      type: Schema.Types.Number,
+      type: Schema.Types.String,
       required: true,
     },
     from: {

@@ -22,7 +22,6 @@ const mongoConnectUri = (): string => {
 }
 
 export default {
-    MONGO_URI,
     APP_PORT: process.env.APP_PORT,
     JWT_SECRET,
     env: NODE_ENV,
