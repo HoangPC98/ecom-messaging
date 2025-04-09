@@ -1,7 +1,7 @@
 import amqp, { Channel, Connection } from "amqplib";
 import config from "../config/config";
 import { SmsServive } from "./sms/send-sms.service";
-
+import logger from '../utils/logger';
 class RmqConsumerService {
   private sendSMSQueue = 'QUEUE_SEND_SMS';
   private sendEmailQueue = 'QUEUE_SEND_MAIL';
@@ -11,7 +11,6 @@ class RmqConsumerService {
   public readonly DIRECT_EXCH = 'direct_exchange';
   public readonly RK_SMS_01 = 'rk_sms_01'
   private readonly smsService: SmsServive;
-
   constructor() {
     this.init();
     this.smsService = new SmsServive();
@@ -34,7 +33,7 @@ class RmqConsumerService {
     await this.channel.assertQueue(this.sendSMSQueue, { durable: true });
     this.channel.consume(this.sendSMSQueue, async (msg) => {
       if (msg) {
-        console.log(`Consume Msg from Queue: ${this.sendEmailQueue}`, msg?.content.toString())
+        logger.info(`Consume Msg from Queue: ${this.sendEmailQueue}`, msg?.content.toString())
         // Acknowledge the processed message
         this.channel.ack(msg);
       }
@@ -45,7 +44,7 @@ class RmqConsumerService {
     await Promise.all(queues.map(queue => {
       this.channel.assertQueue(queue, { durable: true })
     }))
-    console.log(`--> Assert Queue... \n + ${queues.join('\n + ')}`)
+    logger.info(`--> Assert Queue... \n + ${queues.join('\n + ')}`)
 
   }
 
@@ -53,7 +52,7 @@ class RmqConsumerService {
     await Promise.all(queues.map(queue=>{
       this.channel.consume(queue, async (msg)=>{
         if (msg) {
-          console.log(`Consume Msg from Queue: ${queue}`, msg?.content.toString())
+          logger.info(`Consume Msg from Queue: ${queue}`, msg?.content.toString())
           // this.channel.ack(msg);
         }
       })
@@ -66,7 +65,10 @@ class RmqConsumerService {
     this.channel.consume(this.sendSMSQueue, async (msg) => {
       if (msg) {
         let content =  JSON.parse(msg.content.toString())
-        console.log(`Consume Msg from Queue: ${this.sendEmailQueue}`, msg?.content.toString())
+        logger.fatal(`Consume Msg from Queue: ${this.sendEmailQueue}`, msg?.content.toString())
+        logger.warn(`Consume Msg from Queue: ${this.sendEmailQueue}`, msg?.content.toString())
+        logger.info(`Consume Msg from Queue: ${this.sendEmailQueue}`, msg?.content.toString())
+        logger.error(`Consume Msg from Queue: ${this.sendEmailQueue}`, msg?.content.toString())
         // Acknowledge the processed message
         this.channel.ack(msg);
         await this.smsService.consumeMsg(content)
@@ -79,7 +81,7 @@ class RmqConsumerService {
     this.channel.consume(this.sendSMSQueue, async (msg) => {
       if (msg) {
         let content =  JSON.parse(msg.content.toString())
-        console.log(`Consume Msg from Queue: ${this.sendEmailQueue}`, msg?.content.toString())
+        logger.info(`Consume Msg from Queue: ${this.sendEmailQueue}`, msg?.content.toString())
         // Acknowledge the processed message
         this.channel.ack(msg);
         await this.smsService.consumeMsg(content)
@@ -91,7 +93,7 @@ class RmqConsumerService {
     // await this.channel.assertQueue(this.sendEmailQueue, { durable: true });
     this.channel.consume(this.sendEmailQueue, async (msg) => {
       if (msg) {
-        console.log('QUEUE_EMAIL...', msg?.content.toString())
+        logger.info('QUEUE_EMAIL...', msg?.content.toString())
         this.channel.ack(msg);
       }
     })
@@ -101,7 +103,7 @@ class RmqConsumerService {
     await this.channel.assertQueue(this.pushNotificationQueue, { durable: true });
     this.channel.consume(this.pushNotificationQueue, async (msg) => {
       if (msg) {
-        console.log('QUEUE_NOTIFICATION...', msg?.content.toString())
+        logger.info('QUEUE_NOTIFICATION...', msg?.content.toString())
         this.channel.ack(msg);
       }
     })
@@ -112,7 +114,7 @@ class RmqConsumerService {
     await this.channel.bindQueue('', '1234', 'hoangpc'),
       this.channel.consume('', async (msg) => {
         if (msg) {
-          console.log('QUEUE_NONE...', msg?.content.toString().toString())
+          logger.info('QUEUE_NONE...', msg?.content.toString().toString())
           this.channel.ack(msg);
         }
       })

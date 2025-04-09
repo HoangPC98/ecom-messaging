@@ -39,7 +39,7 @@ interface NewsList {
 
 export function find(call: any, callback: any) {
   let recipe = RECIPES.find((recipe) => recipe.productId == call.request.id);
-  console.log('GET findRecipe', call.request.id)
+  logger.info('GET findRecipe', call.request.id)
   if (recipe) {
     callback(null, recipe);
   }
@@ -53,8 +53,8 @@ export function find(call: any, callback: any) {
 
 export function findOne(call: any, callback: any) {
   let recipe = RECIPES.find((recipe) => recipe.productId == call.request.id);
-  console.log('REquest...', call.request)
-  console.log('GET news', recipe)
+  logger.info('REquest...', call.request)
+  logger.info('GET news', recipe)
   if (recipe) {
     callback(null, recipe);
   }
@@ -67,9 +67,9 @@ export function findOne(call: any, callback: any) {
 } 
 
 export function getAllNews(call: any, callback: any) {
-  console.log('GET Request', call.request)
-  console.log('GET findRecipe', call.request.id)
-  console.log('GET news', news)
+  logger.info('GET Request', call.request)
+  logger.info('GET findRecipe', call.request.id)
+  logger.info('GET news', news)
   const newsList: NewsList = { news };
     callback(null, newsList);
 }
@@ -77,9 +77,9 @@ export function getAllNews(call: any, callback: any) {
 export function clientRequest(call: any, callback: any) {
   const client = new customerProto.CustomersService('0.0.0.0:5000', grpc.credentials.createInsecure());
   client.find({ id: call.request.id || 1000 }, (err: any, recipe: any) => {
-    console.log('GET clientRequest', recipe, err)
+    logger.info('GET clientRequest', recipe, err)
     if (err) {
-      console.log('Error', err);
+      logger.info('Error', err);
       callback(err);
     }
     else {

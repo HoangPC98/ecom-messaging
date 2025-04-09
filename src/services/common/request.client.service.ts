@@ -15,16 +15,16 @@ const recipesStub = new recipesProto.Recipes('0.0.0.0:50052', grpc.credentials.c
 let productId = 1000;
 let orderId = 1;
 
-console.log(`Searching a recipe for the product: ${productId}`);
+logger.info(`Searching a recipe for the product: ${productId}`);
 
 export function callre(err: any, recipe: any) {
 
   const call = recipesStub.process({ orderId, recipeId: recipe.id });
   call.on('data', (statusUpdate: any) => {
-    console.log('Order status changed:');
-    console.log(statusUpdate);
+    logger.info('Order status changed:');
+    logger.info(statusUpdate);
   });
   call.on('end', () => {
-    console.log('Processing done.');
+    logger.info('Processing done.');
   });
 };

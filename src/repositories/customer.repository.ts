@@ -55,7 +55,7 @@ export default class CustomersRepository {
     }
 
     public static async removeById(id: string): Promise<Empty> {
-        console.log('Remove customer id: ', id);
+        logger.info('Remove customer id: ', id);
         return Promise.resolve(new Empty());
     }
 }
