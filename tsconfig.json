@@ -2,10 +2,19 @@
   "compilerOptions": {
     "target": "es6",
     "module": "commonjs",
+    "baseUrl": "./",
+    "paths": {
+      "src/*": ["src/*"],
+      "@/*": ["src/*"]
+    },
     "outDir": "./build",
+    "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "sourceMap": true
   },
   "include": [
     "src/**/*"

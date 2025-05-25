@@ -4,7 +4,7 @@ import { errorConverter, errorHandler } from "./middleware";
 import config from "./config/config";
 import { rmqConsumerService } from "./services/queue.service";
 import { initMongoConnection } from "./database/connection/mongo.connection";
-
+import { startGrpcServer } from "./services/messaging/grpc-messaging.service";
 
 let server: Server;
 const restServer: Express = express();
@@ -28,11 +28,11 @@ function startRestServer() {
   });
 }
 
-
 const startApp = async () => {
   await initMongoConnection();
   await initRabbitConsumer();
   startRestServer();
+  startGrpcServer();
 }
 
 startApp();

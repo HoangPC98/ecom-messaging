@@ -26,20 +26,20 @@ class RmqConsumerService {
     });
     // this.consumeQueueSMS();
     this.consumeRkeySMS();
-    this.consumeEmail();
+    // this.consumeEmail();
     this.consumeNotification();
   }
 
-  async consumeQueueBName(queueName: string) {
-    await this.channel.assertQueue(this.sendSMSQueue, { durable: true });
-    this.channel.consume(this.sendSMSQueue, async (msg) => {
-      if (msg) {
-        console.log(`Consume Msg from Queue: ${this.sendEmailQueue}`, msg?.content.toString())
-        // Acknowledge the processed message
-        this.channel.ack(msg);
-      }
-    })
-  }
+  // async consumeQueueBName(queueName: string) {
+  //   await this.channel.assertQueue(this.sendSMSQueue, { durable: true });
+  //   this.channel.consume(this.sendSMSQueue, async (msg) => {
+  //     if (msg) {
+  //       console.log(`Consume Msg from Queue: ${this.sendEmailQueue}`, msg?.content.toString())
+  //       // Acknowledge the processed message
+  //       this.channel.ack(msg);
+  //     }
+  //   })
+  // }
 
   async assertQueues(queues: string[]) {
     await Promise.all(queues.map(queue => {
@@ -66,7 +66,7 @@ class RmqConsumerService {
     this.channel.consume(this.sendSMSQueue, async (msg) => {
       if (msg) {
         let content =  JSON.parse(msg.content.toString())
-        console.log(`Consume Msg from Queue: ${this.sendEmailQueue}`, msg?.content.toString())
+        console.log(`Consume Msg from Queue: ${this.sendSMSQueue}`, msg?.content.toString())
         // Acknowledge the processed message
         this.channel.ack(msg);
         await this.smsService.consumeMsg(content)
@@ -79,7 +79,7 @@ class RmqConsumerService {
     this.channel.consume(this.sendSMSQueue, async (msg) => {
       if (msg) {
         let content =  JSON.parse(msg.content.toString())
-        console.log(`Consume Msg from Queue: ${this.sendEmailQueue}`, msg?.content.toString())
+        console.log(`Consume Msg from Queue: ${this.sendSMSQueue}`, msg?.content.toString())
         // Acknowledge the processed message
         this.channel.ack(msg);
         await this.smsService.consumeMsg(content)
