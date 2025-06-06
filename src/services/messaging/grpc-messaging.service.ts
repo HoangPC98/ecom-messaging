@@ -1,5 +1,6 @@
 import * as grpc from '@grpc/grpc-js';
 import * as protoLoader from '@grpc/proto-loader';
+import { connect } from 'http2';
 import path from 'path';
 import { MessageModel } from 'src/database/models/message.model';
 
@@ -62,13 +63,43 @@ const sendMessage = async (call: grpc.ServerUnaryCall<any, any>, callback: grpc.
   }
 };
 
+const connectSocket = async (call: grpc.ServerUnaryCall<any, any>, callback: grpc.sendUnaryData<any>) => {
+  try {
+    const { userId } = call.request;
+
+    // const newMessage = new MessageModel({
+    //   senderId,
+    //   receiverId,
+    //   text,
+    //   image: undefined
+    // });
+
+    // await newMessage.save();
+    console.log('Socket connected for user:', userId);
+
+    // Emit socket event if receiver is connected
+    // const receiverSocketId = getReceiverSocketId(receiverId);
+    // if (receiverSocketId) {
+    //   io.to(receiverSocketId).emit("newMessage", newMessage);
+    // }
+
+    callback(null, {status: 200, success: true, message: userId });
+  } catch (error) {
+    callback({
+      code: grpc.status.INTERNAL,
+      message: 'Error sending message'
+    });
+  }
+};
+
 // Create and start the gRPC server
 export function startGrpcServer() {
   const server = new grpc.Server();
   
   server.addService(messagingProto.MessagingService.service, {
     clientConnect,
-    sendMessage
+    sendMessage,
+    connectSocket
   });
 
   server.bindAsync('0.0.0.0:9001', grpc.ServerCredentials.createInsecure(), (error, port) => {
@@ -77,6 +108,6 @@ export function startGrpcServer() {
       return;
     }
     server.start();
-    console.log(`gRPC server running on port ${port}`);
+    console.log(`--> gRPC server running on port ${port}`);
   });
 } 
