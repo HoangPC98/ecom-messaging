@@ -11,12 +11,15 @@ import { Server as SocketIOServer } from 'socket.io';
 let server: Server;
 const restServer: Express = express();
 const httpServer = createServer(restServer);
+
+
 const io = new SocketIOServer(httpServer, {
   cors: {
-    origin: '*', // Cho phép tất cả các nguồn hoặc chỉ định nguồn cụ thể
-    methods: ['GET', 'POST']
-  }
+    origin: '*', // Allow all origins for simplicity in development
+    methods: ['GET', 'POST'],
+  },
 });
+
 async function initRabbitConsumer() {
   try {
     await rmqConsumerService.init();
@@ -31,35 +34,38 @@ function startRestServer() {
   restServer.use(express.urlencoded({ extended: true }));
   restServer.use(errorConverter);
   restServer.use(errorHandler);
+  restServer.get('/health', (req, res) => {
+    res.status(200).send('Chat Service is healthy!');
+  });
   io.on('connection', (socket) => {
-  console.log('Client connected to Chat Service:', socket.id);
+    console.log('Client connected to Chat Service:', socket.id);
 
-  // Lắng nghe sự kiện 'message'
-  socket.on('message', (message: string) => {
-    console.log(`[Chat Service] Received message from ${socket.id}: "${message}"`);
-    // Phát lại tin nhắn đến tất cả các client đã kết nối
-    io.emit('message', `[${socket.id.substring(0, 5)}] says: ${message}`);
-  });
+    // Lắng nghe sự kiện 'message'
+    socket.on('message', (message: string) => {
+      console.log(`[Chat Service] Received message from ${socket.id}: "${message}"`);
+      // Phát lại tin nhắn đến tất cả các client đã kết nối
+      io.emit('message', `[${socket.id.substring(0, 5)}] says: ${message}`);
+    });
 
-  // Lắng nghe sự kiện 'joinRoom'
-  socket.on('joinRoom', (room: string) => {
-    socket.join(room);
-    console.log(`[Chat Service] Client ${socket.id} joined room: ${room}`);
-    io.to(room).emit('roomMessage', `Client ${socket.id} has joined room: ${room}`);
-  });
+    // Lắng nghe sự kiện 'joinRoom'
+    socket.on('joinRoom', (room: string) => {
+      socket.join(room);
+      console.log(`[Chat Service] Client ${socket.id} joined room: ${room}`);
+      io.to(room).emit('roomMessage', `Client ${socket.id} has joined room: ${room}`);
+    });
 
-  // Lắng nghe sự kiện 'leaveRoom'
-  socket.on('leaveRoom', (room: string) => {
-    socket.leave(room);
-    console.log(`[Chat Service] Client ${socket.id} left room: ${room}`);
-    io.to(room).emit('roomMessage', `Client ${socket.id} has left room: ${room}`);
-  });
+    // Lắng nghe sự kiện 'leaveRoom'
+    socket.on('leaveRoom', (room: string) => {
+      socket.leave(room);
+      console.log(`[Chat Service] Client ${socket.id} left room: ${room}`);
+      io.to(room).emit('roomMessage', `Client ${socket.id} has left room: ${room}`);
+    });
 
-  // Xử lý khi client ngắt kết nối
-  socket.on('disconnect', () => {
-    console.log('Client disconnected from Chat Service:', socket.id);
+    // Xử lý khi client ngắt kết nối
+    socket.on('disconnect', () => {
+      console.log('Client disconnected from Chat Service:', socket.id);
+    });
   });
-});
 
   server = restServer.listen(config.APP_PORT, () => {
     console.log(`--> Server is running on port ${config.APP_PORT}`);

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "NODE_ENV=development nodemon -r tsconfig-paths/register src/main.ts",
+    "dev": "NODE_ENV=development nodemon src/main.ts",
     "build": "rm -rf build/ && tsc -p .",
     "start": "NODE_ENV=production nodemon build/main.js",
     "test": "echo \"Error: no test specified\" && exit 1",

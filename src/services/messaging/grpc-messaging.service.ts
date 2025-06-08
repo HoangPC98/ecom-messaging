@@ -2,9 +2,9 @@ import * as grpc from '@grpc/grpc-js';
 import * as protoLoader from '@grpc/proto-loader';
 import { connect } from 'http2';
 import path from 'path';
-import { MessageModel } from 'src/database/models/message.model';
+import { MessageModel } from '../../database/models/message.model';
 
-import { getReceiverSocketId, io } from 'src/libs/socket';
+import { getReceiverSocketId, io } from '../../libs/socket';
 
 // Load proto file
 const protoPath = path.join(process.cwd(), '../ecom-protos-grpc/messaging/messaging.proto');

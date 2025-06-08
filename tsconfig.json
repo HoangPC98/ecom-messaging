@@ -4,17 +4,14 @@
     "module": "commonjs",
     "baseUrl": "./",
     "paths": {
-      "src/*": ["src/*"],
-      "@/*": ["src/*"]
+      "src/*": ["./src/*"],
+      "@/*": ["./src/*"]
     },
-    "outDir": "./build",
+    "outDir": "./dist",
     "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
-    "skipLibCheck": true,
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "sourceMap": true
+    "skipLibCheck": true
   },
   "include": [
     "src/**/*"
